@@ -8,9 +8,9 @@ import (
 	"net/http"
 )
 
-func (c *Client) Explore(area *string) (ExploreRespone, error) {
+func (c *Client) LocationGet(area *string) (Location, error) {
 	if area == nil {
-		return ExploreRespone{}, errors.New("area parameter missing")
+		return Location{}, errors.New("area parameter missing")
 	}
 
 	url := baseUrl + "location-area/" + *area
@@ -18,23 +18,27 @@ func (c *Client) Explore(area *string) (ExploreRespone, error) {
 	if !ok {
 		res, err := http.Get(url)
 		if err != nil {
-			return ExploreRespone{}, err
+			return Location{}, err
+		}
+
+		if res.StatusCode == 404 {
+			return Location{}, errors.New("the location could not be found")
 		}
 
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			return ExploreRespone{}, err
+			return Location{}, err
 		}
 
 		c.cache.Add(url, body)
 	}
 
-	response := ExploreRespone{}
+	response := Location{}
 	fmt.Println(url)
 	err := json.Unmarshal(body, &response)
 	if err != nil {
-		return ExploreRespone{}, err
+		return Location{}, err
 	}
 
 	return response, nil

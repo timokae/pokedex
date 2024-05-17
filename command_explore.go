@@ -9,7 +9,7 @@ func commandExplore(cfg *config, args ...string) error {
 	if len(args) != 1 {
 		return errors.New("please provide a location name")
 	}
-	exploreRespone, err := cfg.pokeapiClient.Explore(&args[0])
+	exploreRespone, err := cfg.pokeapiClient.LocationGet(&args[0])
 	if err != nil {
 		return err
 	}

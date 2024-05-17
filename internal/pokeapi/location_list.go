@@ -2,11 +2,12 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
 
-func (c *Client) LocationAreas(pageUrl *string) (LocationAreasResponse, error) {
+func (c *Client) LocationList(pageUrl *string) (ShallowLocation, error) {
 	url := baseUrl + "location-area"
 	if pageUrl != nil {
 		url = *pageUrl
@@ -16,22 +17,26 @@ func (c *Client) LocationAreas(pageUrl *string) (LocationAreasResponse, error) {
 	if !ok {
 		res, err := http.Get(url)
 		if err != nil {
-			return LocationAreasResponse{}, err
+			return ShallowLocation{}, err
+		}
+
+		if res.StatusCode == 404 {
+			return ShallowLocation{}, errors.New("the location could not be found")
 		}
 
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			return LocationAreasResponse{}, err
+			return ShallowLocation{}, err
 		}
 
 		c.cache.Add(url, body)
 	}
 
-	response := LocationAreasResponse{}
+	response := ShallowLocation{}
 	err := json.Unmarshal(body, &response)
 	if err != nil {
-		return LocationAreasResponse{}, err
+		return ShallowLocation{}, err
 	}
 
 	return response, nil
