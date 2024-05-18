@@ -16,8 +16,8 @@ type Command struct {
 }
 
 type config struct {
-	nextLocationsUrl     *string
-	previousLocationsUrl *string
+	nextLocationsUrl     string
+	previousLocationsUrl string
 	pokeapiClient        pokeapi.Client
 	caughtPokemon        map[string]pokeapi.Pokemon
 }
@@ -41,6 +41,12 @@ func startRepl(cfg *config) {
 			if err != nil {
 				fmt.Println(err)
 			}
+
+			err = WriteStateToFile(cfg)
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			continue
 		} else {
 			fmt.Println("Unknown command")

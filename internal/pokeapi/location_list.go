@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func (c *Client) LocationList(pageUrl *string) (ShallowLocation, error) {
+func (c *Client) LocationList(pageUrl string) (ShallowLocation, error) {
 	url := baseUrl + "location-area"
-	if pageUrl != nil {
-		url = *pageUrl
+	if pageUrl != "" {
+		url = pageUrl
 	}
 
 	body, ok := c.cache.Get(url)

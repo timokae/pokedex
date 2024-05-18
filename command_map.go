@@ -22,7 +22,7 @@ func commandMap(cfg *config, args ...string) error {
 }
 
 func commandMapB(cfg *config, args ...string) error {
-	if cfg.previousLocationsUrl == nil {
+	if cfg.previousLocationsUrl == "" {
 		return errors.New("you're on the first page")
 	}
 
